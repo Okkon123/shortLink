@@ -120,4 +120,13 @@ public class UserServiceImp extends ServiceImpl<UserMapper, UserDO> implements U
         Object remoteToken = stringRedisTemplate.opsForHash().get(USER_LOGIN_KEY + username, token);
         return remoteToken != null;
     }
+
+    @Override
+    public void logout(String username, String token) {
+        if (checkLogin(username, token)) {
+            stringRedisTemplate.delete(USER_LOGIN_KEY + username);
+            return;
+        }
+        throw new ClientException("用户Token不存在或用户未登录");
+    }
 }
