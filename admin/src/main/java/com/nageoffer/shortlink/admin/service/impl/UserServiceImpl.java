@@ -40,7 +40,7 @@ import static com.nageoffer.shortlink.admin.common.enums.UserErrorCodeEnum.USER_
  */
 @Service
 @RequiredArgsConstructor
-public class UserServiceImp extends ServiceImpl<UserMapper, UserDO> implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
 
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
