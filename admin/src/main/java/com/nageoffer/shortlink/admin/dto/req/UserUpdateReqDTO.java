@@ -1,5 +1,6 @@
 package com.nageoffer.shortlink.admin.dto.req;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 @Data
@@ -17,6 +18,7 @@ public class UserUpdateReqDTO {
     /**
      * 真实姓名
      */
+    @TableField("real_name")
     private String realName;
 
     /**
