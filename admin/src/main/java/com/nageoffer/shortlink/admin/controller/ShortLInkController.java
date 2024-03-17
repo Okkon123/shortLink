@@ -39,4 +39,9 @@ public class ShortLInkController {
     public Result<IPage<ShortLInkPageRespDTO>> pageShortLink(ShortLinkPageReqDTO requestParam) {
         return shortLInkRemoteService.pageShortLink(requestParam);
     }
+
+//    @GetMapping("/api/short-link/admin/v1/count")
+//    public  Result<List<ShortLinkGroupCountQueryRespDTO>> listGroupShortLinkCount(@RequestParam("requestParam") List<String> requestParam) {
+//        return shortLInkRemoteService.listGroupShortLinkCount(requestParam);
+//    }
 }
