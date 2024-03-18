@@ -55,5 +55,11 @@ public interface ShortLinkRemoteService {
         });
     }
 
+    default Result<String> urlTitleService(String url) {
+        String resultPageStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/title?url=" + url);
+        return JSON.parseObject(resultPageStr, new TypeReference<>() {
+        });
+    }
+//
 
 }
