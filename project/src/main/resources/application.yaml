@@ -12,3 +12,7 @@ spring:
       host: 47.76.161.56
       port: 6379
       password: 123456
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .html

@@ -36,6 +36,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -142,10 +143,12 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         }
         boolean hasLink = shortUriCreatePenetrationBloomFilter.contains(fullShortUrl);
         if (!hasLink) {
+            ((HttpServletResponse) response).sendRedirect("/page/notfound");
             return;
         }
         String gotoIsNullShortLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl));
         if (StrUtil.isNotBlank(gotoIsNullShortLink)) {
+            ((HttpServletResponse) response).sendRedirect("/page/notfound");
             return;
         }
         RLock rLock = redissonClient.getLock(LOCK_GOTO_SHORT_LINK_KEY + fullShortUrl);
@@ -159,7 +162,8 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
             ShortLinkGotoDO shortLinkGotoDO = shortLinkGotoMapper.selectOne(linkGotoDOLambdaQueryWrapper);
             if (shortLinkGotoDO == null) {
-                stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-",  30, TimeUnit.SECONDS);
+                ((HttpServletResponse) response).sendRedirect("/page/notfound");
+                stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-",  30, TimeUnit.MINUTES);
                 // 没有记录
                 return;
             }
@@ -169,9 +173,20 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .eq(BaseDO::getDelFlag, 0)
                     .eq(ShortLinkDO::getEnableStatus, 0);
             ShortLinkDO shortLinkDO = baseMapper.selectOne(queryWrapper);
-            originalLink = shortLinkDO.getOriginUrl();
-            stringRedisTemplate.opsForValue().set(GOTO_SHORT_LINK_KEY + fullShortUrl, originalLink);
-            ((HttpServletResponse) response).sendRedirect(originalLink);
+            if (shortLinkDO != null) {
+                if (shortLinkDO.getValidDate() != null && shortLinkDO.getValidDate().before(new Date())) {
+                    ((HttpServletResponse) response).sendRedirect("/page/notfound");
+                    stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
+                    return;
+                }
+                originalLink = shortLinkDO.getOriginUrl();
+                stringRedisTemplate.opsForValue().set(
+                        GOTO_SHORT_LINK_KEY + fullShortUrl,
+                        originalLink,
+                        LinkUtil.getLinkCacheValidDate(shortLinkDO.getValidDate()),
+                        TimeUnit.MILLISECONDS);
+                ((HttpServletResponse) response).sendRedirect(originalLink);
+            }
         } finally {
             rLock.unlock();
         }
