@@ -13,6 +13,9 @@ import com.nageoffer.shortlink.admin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 用户管理控制层
+ */
 @RestController
 @RequiredArgsConstructor
 public class UserController {

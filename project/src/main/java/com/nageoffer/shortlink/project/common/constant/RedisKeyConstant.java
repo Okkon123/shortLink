@@ -7,12 +7,12 @@ public class RedisKeyConstant {
     /**
      * 短链接跳转前缀 KEY
      */
-    public static final String GOTO_SHORT_LINK_KEY = "short-link_goto_";
+    public static final String GOTO_SHORT_LINK_KEY = "short-link_goto_%s";
 
     /**
      * 短链接跳转锁 KEY
      */
-    public static final String LOCK_GOTO_SHORT_LINK_KEY = "short-link_lock_goto_";
+    public static final String LOCK_GOTO_SHORT_LINK_KEY = "short-link_lock_goto_%s";
 
     /**
      * 短链接空值跳转 KEY

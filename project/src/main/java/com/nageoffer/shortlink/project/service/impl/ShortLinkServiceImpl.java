@@ -96,7 +96,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             }
         }
         stringRedisTemplate.opsForValue().set(
-                GOTO_SHORT_LINK_KEY + fullShortUrl,
+                String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                 requestParam.getOriginUrl(),
                 LinkUtil.getLinkCacheValidDate(requestParam.getValidDate()),
                 TimeUnit.MILLISECONDS);
@@ -143,9 +143,10 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     public void restoreUrl(String shortUri, ServletRequest request, ServletResponse response) {
         String serverName = request.getServerName();
         String fullShortUrl = serverName + "/" + shortUri;
-        String originalLink = stringRedisTemplate.opsForValue().get(GOTO_SHORT_LINK_KEY + fullShortUrl);
+        String originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
         if (StrUtil.isNotBlank(originalLink)) {
             ((HttpServletResponse) response).sendRedirect(originalLink);
+            return;
         }
         boolean hasLink = shortUriCreatePenetrationBloomFilter.contains(fullShortUrl);
         if (!hasLink) {
@@ -157,12 +158,13 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
             ((HttpServletResponse) response).sendRedirect("/page/notfound");
             return;
         }
-        RLock rLock = redissonClient.getLock(LOCK_GOTO_SHORT_LINK_KEY + fullShortUrl);
+        RLock rLock = redissonClient.getLock(String.format(LOCK_GOTO_SHORT_LINK_KEY, fullShortUrl));
         rLock.lock();
-        originalLink = stringRedisTemplate.opsForValue().get(GOTO_SHORT_LINK_KEY + fullShortUrl);
+        originalLink = stringRedisTemplate.opsForValue().get(String.format(GOTO_SHORT_LINK_KEY, fullShortUrl));
         try {
             if (StrUtil.isNotBlank(originalLink)) {
                 ((HttpServletResponse) response).sendRedirect(originalLink);
+                return;
             }
             LambdaQueryWrapper<ShortLinkGotoDO> linkGotoDOLambdaQueryWrapper = Wrappers.lambdaQuery(ShortLinkGotoDO.class)
                     .eq(ShortLinkGotoDO::getFullShortUrl, fullShortUrl);
@@ -187,7 +189,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 }
                 originalLink = shortLinkDO.getOriginUrl();
                 stringRedisTemplate.opsForValue().set(
-                        GOTO_SHORT_LINK_KEY + fullShortUrl,
+                        String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
                         originalLink,
                         LinkUtil.getLinkCacheValidDate(shortLinkDO.getValidDate()),
                         TimeUnit.MILLISECONDS);

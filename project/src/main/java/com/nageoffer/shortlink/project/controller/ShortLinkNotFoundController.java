@@ -2,7 +2,9 @@ package com.nageoffer.shortlink.project.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+/**
+ * 短链接不存在跳转控制层
+ */
 @Controller
 public class ShortLinkNotFoundController {
     /**
