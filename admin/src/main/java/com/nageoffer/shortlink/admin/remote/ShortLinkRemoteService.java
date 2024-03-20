@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nageoffer.shortlink.admin.common.convention.result.Result;
+import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkRecycleBinPageReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.req.RecycleBinSaveReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkCreateReqDTO;
 import com.nageoffer.shortlink.admin.remote.dto.req.ShortLinkPageReqDTO;
@@ -73,9 +74,9 @@ public interface ShortLinkRemoteService {
      * @param requestParam 分页短链接请求
      * @return
      */
-    default Result<IPage<ShortLInkPageRespDTO>> pageRecycleBinShortLink(ShortLinkPageReqDTO requestParam) {
+    default Result<IPage<ShortLInkPageRespDTO>> pageRecycleBinShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
         Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("gidList", requestParam.getGidList());
         requestMap.put("current", requestParam.getCurrent());
         requestMap.put("size", requestParam.getSize());
         String resultPageStr = HttpUtil.get("http://127.0.0.1:8001/api/short-link/v1/recycle-bin/page", requestMap);

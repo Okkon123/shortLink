@@ -10,7 +10,7 @@ import com.nageoffer.shortlink.project.common.database.BaseDO;
 import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
 import com.nageoffer.shortlink.project.dao.mapper.ShortLinkMapper;
 import com.nageoffer.shortlink.project.dto.req.RecycleBinSaveReqDTO;
-import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
+import com.nageoffer.shortlink.project.dto.req.ShortLinkRecycleBinPageReqDTO;
 import com.nageoffer.shortlink.project.dto.resp.ShortLInkPageRespDTO;
 import com.nageoffer.shortlink.project.service.RecycleBinService;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +38,12 @@ public class RecycleBinServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLin
     }
 
     @Override
-    public IPage<ShortLInkPageRespDTO> pageShortLink(ShortLinkPageReqDTO requestParam) {
+    public IPage<ShortLInkPageRespDTO> pageShortLink(ShortLinkRecycleBinPageReqDTO requestParam) {
         LambdaQueryWrapper<ShortLinkDO> queryWrapper = Wrappers.lambdaQuery(ShortLinkDO.class)
-                .eq(ShortLinkDO::getGid, requestParam.getGid())
+                .in(ShortLinkDO::getGid, requestParam.getGidList())
                 .eq(ShortLinkDO::getEnableStatus, 1)
                 .eq(BaseDO::getDelFlag,0)
-                .orderByDesc(BaseDO::getCreateTime);
+                .orderByDesc(BaseDO::getUpdateTime);
         IPage<ShortLinkDO> page = baseMapper.selectPage(requestParam, queryWrapper);
         return page.convert(each -> {
             ShortLInkPageRespDTO result = BeanUtil.toBean(each, ShortLInkPageRespDTO.class);
