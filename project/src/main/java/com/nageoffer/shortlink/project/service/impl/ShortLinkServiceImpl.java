@@ -17,14 +17,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nageoffer.shortlink.project.common.convention.exception.ServiceException;
 import com.nageoffer.shortlink.project.common.database.BaseDO;
-import com.nageoffer.shortlink.project.dao.entity.LinkAccessStatsDO;
-import com.nageoffer.shortlink.project.dao.entity.LinkLocationStatsDO;
-import com.nageoffer.shortlink.project.dao.entity.ShortLinkDO;
-import com.nageoffer.shortlink.project.dao.entity.ShortLinkGotoDO;
-import com.nageoffer.shortlink.project.dao.mapper.LinkAccessStatsMapper;
-import com.nageoffer.shortlink.project.dao.mapper.LinkLocationStatsMapper;
-import com.nageoffer.shortlink.project.dao.mapper.ShortLinkGotoMapper;
-import com.nageoffer.shortlink.project.dao.mapper.ShortLinkMapper;
+import com.nageoffer.shortlink.project.dao.entity.*;
+import com.nageoffer.shortlink.project.dao.mapper.*;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkCreateReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkPageReqDTO;
 import com.nageoffer.shortlink.project.dto.req.ShortLinkUpdateReqDTO;
@@ -75,6 +69,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private final RedissonClient redissonClient;
     private final LinkAccessStatsMapper linkAccessStatsMapper;
     private final LinkLocationStatsMapper linkLocationStatsMapper;
+    private final LinkOsStatsMapper linkOsStatsMapper;
 
     @Value("${short-link.stats.location.amap-key}")
     private String amapKey;
@@ -292,8 +287,18 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                         .gid(gid)
                         .date(new Date())
                         .build();
-                linkLocationStatsMapper.shortLinkStats(linkLocationStatsDO);
+                linkLocationStatsMapper.shortLinkLocationStats(linkLocationStatsDO);
             }
+            // 操作系统统计
+            String os = LinkUtil.getOs(((HttpServletRequest) request));
+            LinkOsStatsDO linkOsStatsDO = LinkOsStatsDO.builder()
+                    .os(os)
+                    .cnt(1)
+                    .gid(gid)
+                    .date(new Date())
+                    .fullShortUrl(fullShortUrl)
+                    .build();
+            linkOsStatsMapper.shortLinkOsState(linkOsStatsDO);
         } catch (Throwable ex) {
             log.error("短链接访问量统计异常", ex);
         }
