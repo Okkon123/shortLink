@@ -1,5 +1,6 @@
 package com.nageoffer.shortlink.project.service.impl;
 
+import com.nageoffer.shortlink.project.service.UrlTitleService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -14,7 +15,7 @@ import java.net.URL;
  */
 @Slf4j
 @Service
-public class UrlTitleServiceImpl implements com.nageoffer.shortlink.project.service.UrlTitleService {
+public class UrlTitleServiceImpl implements UrlTitleService {
     @SneakyThrows
     @Override
     public String getTitleByUrl(String url) {

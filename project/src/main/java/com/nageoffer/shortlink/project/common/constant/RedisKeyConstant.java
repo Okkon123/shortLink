@@ -22,10 +22,10 @@ public class RedisKeyConstant {
     /**
      * 用户是否首次登录标识
      */
-    public static final String UV_FIRST_KEY = "short-link:stats:uv:%s";
+    public static final String UV_FIRST_KEY = "short-link_stats:uv:%s";
 
     /**
      * 用户IP首次登录标识
      */
-    public static final String UIP_FIRST_KEY = "short-link:stats:uip:$s";
+    public static final String UIP_FIRST_KEY = "short-link_stats:uip:$s";
 }
