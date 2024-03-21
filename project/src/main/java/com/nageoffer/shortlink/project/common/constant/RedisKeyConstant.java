@@ -18,4 +18,9 @@ public class RedisKeyConstant {
      * 短链接空值跳转 KEY
      */
     public static final String GOTO_IS_NULL_SHORT_LINK_KEY = "short-link_is_null_goto_%s";
+
+    /**
+     * 用户是否首次登录标识
+     */
+    public static final String UV_STATS_KEY = "short-link:stats:uv:%s";
 }
