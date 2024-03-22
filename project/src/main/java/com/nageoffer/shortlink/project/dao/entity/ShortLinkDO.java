@@ -1,8 +1,6 @@
 package com.nageoffer.shortlink.project.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.nageoffer.shortlink.project.common.database.BaseDO;
 import lombok.AllArgsConstructor;
@@ -11,15 +9,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+
+/**
+ * 短链接实体
+ */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @TableName("t_link")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShortLinkDO extends BaseDO {
 
-
-    @TableId(type = IdType.AUTO)
     /**
      * id
      */
@@ -56,19 +56,19 @@ public class ShortLinkDO extends BaseDO {
     private String gid;
 
     /**
-     * 启用标识 0:启用 1:禁用
+     * 启用标识 0：启用 1：未启用
      */
-    private int enableStatus;
+    private Integer enableStatus;
 
     /**
      * 创建类型 0：接口创建 1：控制台创建
      */
-    private int createType;
+    private Integer createdType;
 
     /**
      * 有效期类型 0：永久有效 1：自定义
      */
-    private int validDateType;
+    private Integer validDateType;
 
     /**
      * 有效期
@@ -80,8 +80,24 @@ public class ShortLinkDO extends BaseDO {
      */
     @TableField("`describe`")
     private String describe;
+
     /**
      * 网站标识
      */
     private String favicon;
+
+    /**
+     * 历史PV
+     */
+    private Integer totalPv;
+
+    /**
+     * 历史UV
+     */
+    private Integer totalUv;
+
+    /**
+     * 历史UIP
+     */
+    private Integer totalUip;
 }
