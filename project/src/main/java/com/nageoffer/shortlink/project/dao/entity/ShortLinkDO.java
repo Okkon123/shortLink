@@ -122,5 +122,5 @@ public class ShortLinkDO extends BaseDO {
     /**
      * 删除时间
      */
-    private Long delTime;
+    private Date delTime;
 }

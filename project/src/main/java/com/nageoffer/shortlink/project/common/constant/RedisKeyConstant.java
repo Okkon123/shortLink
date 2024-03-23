@@ -28,4 +28,9 @@ public class RedisKeyConstant {
      * 用户IP首次登录标识
      */
     public static final String UIP_FIRST_KEY = "short-link_stats:uip:$s";
+
+    /**
+     * 短链接修改分组 ID 锁前缀 Key
+     */
+    public static final String LOCK_GID_UPDATE_KEY = "short-link:lock:update-gid:%s";
 }
