@@ -584,7 +584,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
         while (true) {
             originUrl += System.currentTimeMillis();
             res = HashUtil.hashToBase62(originUrl);
-            String fullShortUri = requestParam.getDomain() + "/" + res;
+            String fullShortUri = createShortLinkDefaultDomain + "/" + res;
             if (!shortUriCreatePenetrationBloomFilter.contains(fullShortUri)) {
                 break;
             }
