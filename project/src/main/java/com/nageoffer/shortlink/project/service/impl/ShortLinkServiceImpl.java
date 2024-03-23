@@ -207,21 +207,19 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                     .eq(BaseDO::getDelFlag, 0)
                     .eq(ShortLinkDO::getEnableStatus, 0);
             ShortLinkDO shortLinkDO = baseMapper.selectOne(queryWrapper);
-            if (shortLinkDO != null) {
-                if (shortLinkDO.getValidDate() != null && shortLinkDO.getValidDate().before(new Date())) {
-                    ((HttpServletResponse) response).sendRedirect("/page/notfound");
-                    stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
-                    return;
-                }
-                originalLink = shortLinkDO.getOriginUrl();
-                stringRedisTemplate.opsForValue().set(
-                        String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
-                        originalLink,
-                        LinkUtil.getLinkCacheValidDate(shortLinkDO.getValidDate()),
-                        TimeUnit.MILLISECONDS);
-                ((HttpServletResponse) response).sendRedirect(originalLink);
-                shortLinkStats(fullShortUrl, shortLinkDO.getGid(), request, response);
+            if (shortLinkDO == null || shortLinkDO.getValidDate() != null && shortLinkDO.getValidDate().before(new Date())) {
+                ((HttpServletResponse) response).sendRedirect("/page/notfound");
+                stringRedisTemplate.opsForValue().set(String.format(GOTO_IS_NULL_SHORT_LINK_KEY, fullShortUrl), "-", 30, TimeUnit.MINUTES);
+                return;
             }
+            originalLink = shortLinkDO.getOriginUrl();
+            stringRedisTemplate.opsForValue().set(
+                    String.format(GOTO_SHORT_LINK_KEY, fullShortUrl),
+                    originalLink,
+                    LinkUtil.getLinkCacheValidDate(shortLinkDO.getValidDate()),
+                    TimeUnit.MILLISECONDS);
+            ((HttpServletResponse) response).sendRedirect(originalLink);
+            shortLinkStats(fullShortUrl, shortLinkDO.getGid(), request, response);
         } finally {
             rLock.unlock();
         }
