@@ -250,12 +250,12 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 ShortLinkGotoDO shortLinkGotoDO = shortLinkGotoMapper.selectOne(linkGotoDOQueryWrapper);
                 shortLinkGotoMapper.deleteById(hasShortLinkDO.getGid());
                 shortLinkGotoDO.setGid(requestParam.getGid());
-                //shortLinkGotoMapper.insert(shortLinkGotoDO);
+                shortLinkGotoMapper.insert(shortLinkGotoDO);
+                // 更新link_access_stats表
                 LambdaUpdateWrapper<LinkAccessStatsDO> linkAccessStatsUpdateWrapper =Wrappers.lambdaUpdate(LinkAccessStatsDO.class)
                         .eq(LinkAccessStatsDO::getFullShortUrl, requestParam.getFullShortUrl())
                         .eq(LinkAccessStatsDO::getGid, hasShortLinkDO.getGid())
                         .eq(BaseDO::getDelFlag, 0);
-                // 更新link_access_stats表
                 LinkAccessStatsDO linkAccessStatsDO = LinkAccessStatsDO.builder()
                         .gid(requestParam.getGid())
                         .build();
@@ -318,7 +318,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
                 rLock.unlock();
             }
         }
-        if (!Objects.equals(hasShortLinkDO.getValidDate(), requestParam.getValidDateType()) 
+        if (!Objects.equals(hasShortLinkDO.getValidDateType(), requestParam.getValidDateType())
         || !Objects.equals(hasShortLinkDO.getValidDate(), requestParam.getValidDate())) {
             stringRedisTemplate.delete(String.format(GOTO_SHORT_LINK_KEY, requestParam.getFullShortUrl()));
             if (hasShortLinkDO.getValidDate() != null && hasShortLinkDO.getValidDate().before(new Date())) {

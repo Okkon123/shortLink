@@ -22,6 +22,15 @@ short-link:
   stats:
     location:
       amap-key: ae835f1b508ba57a45a9e574b7ad77c5
+  goto-domain:
+    white-list:
+      enable: false
+      names: '知乎，掘金'
+      details:
+        - zhihu.com
+        - juejin.cn
+
+
 
 mybatis-plus:
   configuration:
