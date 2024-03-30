@@ -88,6 +88,7 @@ public class ShortLinkServiceImpl extends ServiceImpl<ShortLinkMapper, ShortLink
     private String amapKey;
     @Value("${short-link.domain.default}")
     private String createShortLinkDefaultDomain;
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public ShortLinkCreateRespDTO createShortLink(ShortLinkCreateReqDTO requestParam) {
         String shortLinkSuffix = generateSuffix(requestParam);
